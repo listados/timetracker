@@ -12,8 +12,10 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd xml zip \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd xml zip opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -29,6 +31,10 @@ RUN groupadd -g ${GID} devuser \
     && mkdir -p /home/devuser/.composer \
     && chown -R devuser:devuser /home/devuser
 
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
 WORKDIR /var/www
 
 USER devuser
+
+CMD ["entrypoint.sh"]

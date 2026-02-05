@@ -7,10 +7,13 @@ services:
         UID: 1001
         GID: 1001
     container_name: timetracking-app
+    ports:
+      - "5173:5173"
     volumes:
       - .:/var/www
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - timetracking
 
@@ -41,6 +44,12 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - timetracking
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psecret"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
 networks:
   timetracking:
