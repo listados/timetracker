@@ -1,59 +1,126 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TimeTracker
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicacao web para registro e monitoramento de tempo gasto em atividades profissionais. Permite registrar tarefas, acompanhar tempo por projeto e gerar relatorios mensais de produtividade.
 
-## About Laravel
+## Stack Tecnologica
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Backend:** Laravel 12 (PHP 8.4), MySQL 8.0, Eloquent ORM
+- **Frontend:** Blade Templates, Livewire 3, Alpine.js, Tailwind CSS, Chart.js
+- **Autenticacao:** Laravel Breeze
+- **Build:** Vite 7, Node.js 22
+- **Infra:** Docker (PHP-FPM, Nginx, MySQL, Vite)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Funcionalidades
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Projetos
+- CRUD com nome, descricao e cor
+- Soft delete (desativar/reativar)
+- Total de horas acumuladas por projeto
 
-## Learning Laravel
+### Atividades
+- CRUD manual com titulo, descricao, inicio, termino, projeto (opcional) e links externos (GitHub, Todoist, etc)
+- Timer automatico com botao "Iniciar agora" / "Parar" e indicador visual
+- Apenas uma atividade em andamento por vez
+- Soft delete
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Calculo Automatico de Duracao
+- `duration_minutes = ended_at - started_at`
+- Calculado automaticamente ao salvar
+- Exibicao formatada em HH:MM
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Modelo de Usuario
 
-## Laravel Sponsors
+- Autenticacao individual, acesso privado (cada usuario ve apenas seus dados)
+- Sistema single-tenant, sem hierarquia (sem admin/colaborador)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Estrutura de Dados
 
-### Premium Partners
+```
+User 1──N Project
+User 1──N Activity
+Project 1──N Activity
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### projects
+| Campo | Tipo |
+|-------|------|
+| id | PK |
+| user_id | FK -> users |
+| name | string |
+| description | text (opcional) |
+| color | string hex (ex: "#3B82F6") |
+| is_active | boolean |
+| deleted_at | soft delete |
 
-## Contributing
+### activities
+| Campo | Tipo |
+|-------|------|
+| id | PK |
+| user_id | FK -> users |
+| project_id | FK -> projects (opcional) |
+| title | string |
+| description | text (opcional) |
+| started_at | datetime |
+| ended_at | datetime (nullable = em andamento) |
+| duration_minutes | integer (calculado) |
+| github_link | URL (opcional) |
+| todoist_link | URL (opcional) |
+| other_links | JSON |
+| deleted_at | soft delete |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Como Rodar
 
-## Code of Conduct
+### Pre-requisitos
+- Docker e Docker Compose
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Subir o projeto
 
-## Security Vulnerabilities
+```bash
+docker compose up -d
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Isso inicia automaticamente:
 
-## License
+| Container | Descricao | Porta |
+|-----------|-----------|-------|
+| timetracking-mysql | Banco de dados MySQL 8.0 | 3306 |
+| timetracking-app | PHP-FPM com OPcache e caches Laravel | 9000 (interno) |
+| timetracking-vite | Vite dev server com HMR | 5173 |
+| timetracking-nginx | Proxy reverso | 8080 |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Acesse: **http://localhost:8080**
+
+### Comandos uteis
+
+```bash
+# Migrations
+docker compose exec app php artisan migrate
+
+# Testes
+docker compose exec app php artisan test
+
+# Composer
+docker compose exec app composer <comando>
+
+# Artisan
+docker compose exec app php artisan <comando>
+
+# Tinker
+docker compose exec app php artisan tinker
+```
+
+### Acessos
+
+| Servico | URL / Host |
+|---------|------------|
+| App | http://localhost:8080 |
+| Vite HMR | http://localhost:5173 |
+| MySQL | localhost:3306 (user: `timetracking` / senha: `secret` / db: `timetracking`) |
+
+## Arquitetura
+
+### Padroes de Projeto
+- **MVC:** Resource Controllers + Eloquent Models + Blade Views
+- **Service Layer:** `ActivityService` (logica de negocio), `ReportService` (relatorios)
+- **Observers:** `ActivityObserver` — calcula `duration_minutes` automaticamente
+- **Form Requests:** validacao centralizada e reutilizavel
