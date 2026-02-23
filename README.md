@@ -10,6 +10,10 @@ Aplicacao web para registro e monitoramento de tempo gasto em atividades profiss
 - **Build:** Vite 7, Node.js 22
 - **Infra:** Docker (PHP-FPM, Nginx, MySQL, Vite)
 
+## Tema
+- https://wrapmarket.com/item/duralux-php-admin-dashboard-bootstrap-template-WB053795D
+- Preview: https://wrapmarket.com/item/WB053795D/preview
+
 ## Funcionalidades
 
 ### Projetos
