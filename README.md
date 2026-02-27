@@ -6,7 +6,7 @@ Aplicacao web para registro e monitoramento de tempo gasto em atividades profiss
 
 - **Backend:** Laravel 12 (PHP 8.4), MySQL 8.0, Eloquent ORM
 - **Frontend:** Blade Templates, Livewire 3, Alpine.js, Tailwind CSS, Chart.js
-- **Autenticacao:** Laravel Breeze
+- **Autenticacao:** Laravel Breeze9
 - **Build:** Vite 7, Node.js 22
 - **Infra:** Docker (PHP-FPM, Nginx, MySQL, Vite)
 
