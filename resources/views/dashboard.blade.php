@@ -2,7 +2,6 @@
     <x-slot name="header">
         <h2 class="h5 mb-0">{{ __('Dashboard') }}</h2>
     </x-slot>
-
     <div class="py-4">
         <div class="container-xl">
             <div class="card shadow-sm">
@@ -55,31 +54,56 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
+                                   @foreach($projects as $project)
+                                       <tr>
+                                           <td>
+                                               <span class="text-dark">
+                                                   {{$project->name}}
+                                               </span>
+                                           </td>
+                                           <td>
+                                               <span class="text-dark">
+                                                   {{$project->description}}
+                                               </span>
+                                           </td>
+                                           <td>
+                                               @if($project->is_active == 1)
+                                                   <span class="badge bg-soft-success text-success">
+                                                      Sim
+                                                   </span>
+                                               @else
+                                                   <span class="badge bg-soft-danger text-danger">
+                                                      Não
+                                                   </span>
+                                               @endif
 
-                                    </tr>
+                                           </td>
+                                           <td>
+                                               <span class="text-dark">
+                                                   {{$project->created_at}}
+                                               </span>
+                                           </td>
+                                           <td>
+                                               <div class="d-flex">
+                                                   <a href="" class="btn btn-primary p-2 m-1">
+                                                        Editar
+                                                   </a>
+                                                   <a class="btn btn-md bg-soft-danger text-danger p-2 m-1">
+                                                       Excluir
+                                                   </a>
+                                                   <a class="btn btn-light-brand p-2 m-1">
+                                                       Ver atividades
+                                                   </a>
+                                               </div>
+                                           </td>
+                                       </tr>
+                                   @endforeach
 
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <div class="card-footer">
-                            <ul class="list-unstyled d-flex align-items-center gap-2 mb-0 pagination-common-style">
-                                <li>
-                                    <a href="javascript:void(0);"><i class="bi bi-arrow-left"></i></a>
-                                </li>
-                                <li><a href="javascript:void(0);" class="active">1</a></li>
-                                <li><a href="javascript:void(0);">2</a></li>
-                                <li>
-                                    <a href="javascript:void(0);"><i class="bi bi-dot"></i></a>
-                                </li>
-                                <li><a href="javascript:void(0);">8</a></li>
-                                <li><a href="javascript:void(0);">9</a></li>
-                                <li>
-                                    <a href="javascript:void(0);"><i class="bi bi-arrow-right"></i></a>
-                                </li>
-                            </ul>
-                        </div>
+
                     </div>
                 </div>
             </div>
