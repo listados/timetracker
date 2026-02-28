@@ -7,24 +7,39 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite([
+            'resources/css/app.css',
+            'resources/css/theme.min.css',
+            'resources/js/jquery.min.js',
+            'resources/js/vendors.min.js',
+            'resources/js/app.js',
+            'resources/js/common-init.min.js',
+        ])
     </head>
-    <body class="bg-light">
-        @include('layouts.navigation')
+    <body>
+        {{-- Sidebar --}}
+        <x-sidebar />
 
-        <!-- Page Heading -->
-        @isset($header)
-            <header class="bg-white border-bottom shadow-sm">
-                <div class="container-xl py-3">
-                    {{ $header }}
+        {{-- Topbar --}}
+        <x-topbar />
+
+        {{-- Main Content --}}
+        <main class="nxl-container">
+            <div class="nxl-content">
+                @isset($header)
+                    <div class="page-header">
+                        <div class="page-header-left d-flex align-items-center">
+                            <div class="page-header-title">
+                                {{ $header }}
+                            </div>
+                        </div>
+                    </div>
+                @endisset
+
+                <div class="main-content">
+                    {{ $slot }}
                 </div>
-            </header>
-        @endisset
-
-        <!-- Page Content -->
-        <main>
-            {{ $slot }}
+            </div>
         </main>
     </body>
 </html>
