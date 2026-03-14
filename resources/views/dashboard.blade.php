@@ -91,7 +91,7 @@
                                                    <a class="btn btn-md bg-soft-danger text-danger p-2 m-1">
                                                        Excluir
                                                    </a>
-                                                   <a class="btn btn-light-brand p-2 m-1">
+                                                   <a href="{{url('atividades/'.$project->id.'/projeto')}}" class="btn btn-light-brand p-2 m-1">
                                                        Ver atividades
                                                    </a>
                                                </div>
