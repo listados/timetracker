@@ -6,7 +6,7 @@ services:
       args:
         UID: 1000
         GID: 1000
-    container_name: timetracking-app
+    container_name: tt-app
     volumes:
       - .:/var/www
     depends_on:
@@ -22,7 +22,7 @@ services:
       args:
         UID: 1000
         GID: 1000
-    container_name: timetracking-vite
+    container_name: tt-vite
     ports:
       - "5173:5173"
     volumes:
