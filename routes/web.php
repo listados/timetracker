@@ -19,6 +19,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('dashboard',[ProjectController::class, 'allProjects'])->name('dashboard');
     Route::get('atividades/{id}/projeto',[ActivityController::class, 'index'])->name('atividades');
+    Route::post('atividades/{id}/projeto',[ActivityController::class, 'store'])->name('atividades.store');
+    Route::put('atividades/{id}',[ActivityController::class, 'update'])->name('atividades.update');
+    Route::delete('atividades/{id}',[ActivityController::class, 'destroy'])->name('atividades.destroy');
 });
 
 require __DIR__.'/auth.php';
