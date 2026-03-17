@@ -43,4 +43,15 @@ class Activity extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    public function getHumanizedDurationAttribute(): string
+    {
+        if (!$this->duration_minutes) {
+            return '0 min';
+        }
+
+        return \Carbon\CarbonInterval::minutes($this->duration_minutes)
+            ->cascade()
+            ->forHumans(['short' => true]);
+    }
 }

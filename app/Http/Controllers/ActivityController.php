@@ -33,9 +33,24 @@ class ActivityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, int $id)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'started_at' => 'nullable|date',
+            'ended_at' => 'nullable|date|after_or_equal:started_at',
+            'github_link' => 'nullable|url',
+            'todoist_link' => 'nullable|url',
+            'other_links' => 'nullable|array',
+        ]);
+
+        $validated['user_id'] = auth()->id();
+        $validated['project_id'] = $id;
+
+        $this->activityService->create($validated);
+
+        return redirect()->back()->with('success', 'Atividade criada com sucesso!');
     }
 
     /**
@@ -59,7 +74,19 @@ class ActivityController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'started_at' => 'nullable|date',
+            'ended_at' => 'nullable|date|after_or_equal:started_at',
+            'github_link' => 'nullable|url',
+            'todoist_link' => 'nullable|url',
+            'other_links' => 'nullable|array',
+        ]);
+
+        $this->activityService->update((int) $id, $validated);
+
+        return redirect()->back()->with('success', 'Atividade atualizada com sucesso!');
     }
 
     /**
@@ -67,6 +94,8 @@ class ActivityController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->activityService->delete((int) $id);
+
+        return redirect()->back()->with('success', 'Atividade excluída com sucesso!');
     }
 }
