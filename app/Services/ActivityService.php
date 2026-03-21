@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Activity;
+use App\Notifications\ActivityCreatedNotification;
 
 class ActivityService
 {
@@ -20,7 +21,11 @@ class ActivityService
             $data['duration_minutes'] = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
         }
 
-        return Activity::create($data);
+        $activity = Activity::create($data);
+
+        auth()->user()->notify(new ActivityCreatedNotification($activity->load('project')));
+
+        return $activity;
     }
 
     public function update(int $id, array $data): bool

@@ -19,7 +19,10 @@
                 @endif
                 <div class="card stretch stretch-full">
                     <div class="card-header">
-                        <h5 class="card-title">{{$activity[0]->project->name}}</h5>
+                        @php
+                            $nameProject = !empty($activity[0]->project->name) ? $activity[0]->project->name : 'Projeto';
+                        @endphp
+                        <h5 class="card-title">{{$nameProject}}</h5>
                         <div class="card-header-action">
                             <div class="card-header-btn">
                                 <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#createActivity" class="btn btn-primary btn-sm me-3">
@@ -190,7 +193,10 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('atividades.store', $activity[0]->project_id) }}" method="POST">
+                        @php
+                            $idProject = !empty($activity[0]->project_id) ? $activity[0]->project_id : 0;
+                        @endphp
+                        <form action="{{ route('atividades.store', $idProject ) }}" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-md-12 mb-3">

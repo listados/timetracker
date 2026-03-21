@@ -24,6 +24,96 @@
         <div class="header-right ms-auto">
             <div class="d-flex align-items-center">
                 {{-- User dropdown --}}
+                @php
+                    $notifications = auth()->user()->notifications()->latest()->take(10)->get();
+                    $unreadCount   = auth()->user()->unreadNotifications()->count();
+                @endphp
+                <div class="dropdown nxl-h-item">
+                    <a class="nxl-head-link me-3" data-bs-toggle="dropdown" href="#" role="button" data-bs-auto-close="outside">
+                        <i class="fa fa-bell fa-xl"></i>
+                        @if($unreadCount > 0)
+                            <span class="badge bg-danger nxl-h-badge">{{ $unreadCount }}</span>
+                        @endif
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-notifications-menu">
+                        <div class="d-flex justify-content-between align-items-center notifications-head">
+                            <h6 class="fw-bold text-dark mb-0">Notificações</h6>
+                            @if($unreadCount > 0)
+                                <a href="javascript:void(0);"
+                                   class="fs-11 text-success text-end ms-auto mark-all-read"
+                                   data-url="{{ route('notifications.read-all') }}">
+                                    <i class="feather-check"></i>
+                                    <span>Marcar todas como lidas</span>
+                                </a>
+                            @endif
+                        </div>
+
+                        @forelse($notifications as $notification)
+                            <div class="notifications-item {{ is_null($notification->read_at) ? 'bg-light' : '' }}"
+                                 id="notification-{{ $notification->id }}">
+                                <div class="notifications-desc">
+                                    <a href="javascript:void(0);" class="font-body text-truncate-2-line">
+                                        {{ $notification->data['message'] }}
+                                    </a>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="notifications-date text-muted border-bottom border-bottom-dashed">
+                                            {{ $notification->created_at->diffForHumans() }}
+                                        </div>
+                                        @if(is_null($notification->read_at))
+                                            <div class="d-flex align-items-center float-end gap-2">
+                                                <a href="javascript:void(0);"
+                                                   class="d-block wd-8 ht-8 rounded-circle bg-primary mark-as-read"
+                                                   data-id="{{ $notification->id }}"
+                                                   data-url="{{ route('notifications.read', $notification->id) }}"
+                                                   title="Marcar como lida"></a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-3 text-muted fs-13">Nenhuma notificação.</div>
+                        @endforelse
+
+                        <div class="text-center notifications-footer">
+                            <span class="fs-13 text-muted">Últimas {{ $notifications->count() }} notificações</span>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.querySelectorAll('.mark-as-read').forEach(function (el) {
+                            el.addEventListener('click', function () {
+                                const id   = this.dataset.id;
+                                const url  = this.dataset.url;
+                                const item = document.getElementById('notification-' + id);
+                                fetch(url, {
+                                    method: 'PATCH',
+                                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+                                }).then(() => {
+                                    item.classList.remove('bg-light');
+                                    this.remove();
+                                    const badge = document.querySelector('.nxl-h-badge');
+                                    if (badge) {
+                                        const count = parseInt(badge.textContent) - 1;
+                                        count > 0 ? badge.textContent = count : badge.remove();
+                                    }
+                                });
+                            });
+                        });
+
+                        const markAll = document.querySelector('.mark-all-read');
+                        if (markAll) {
+                            markAll.addEventListener('click', function () {
+                                fetch(this.dataset.url, {
+                                    method: 'PATCH',
+                                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+                                }).then(() => location.reload());
+                            });
+                        }
+                    });
+                </script>
                 <div class="dropdown nxl-h-item">
                     <a href="javascript:void(0);"
                        class="nxl-head-link me-0 d-flex align-items-center gap-2"
@@ -68,6 +158,7 @@
                         </form>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

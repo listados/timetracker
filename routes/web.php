@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,9 @@ Route::middleware('auth')->group(function () {
     Route::post('atividades/{id}/projeto',[ActivityController::class, 'store'])->name('atividades.store');
     Route::put('atividades/{id}',[ActivityController::class, 'update'])->name('atividades.update');
     Route::delete('atividades/{id}',[ActivityController::class, 'destroy'])->name('atividades.destroy');
+
+    Route::patch('notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+    Route::patch('notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 });
 
 require __DIR__.'/auth.php';

@@ -46,7 +46,7 @@ class ActivityController extends Controller
         ]);
 
         $validated['user_id'] = auth()->id();
-        $validated['project_id'] = $id;
+        $validated['project_id'] = $id > 0 ? $id : null;
 
         $this->activityService->create($validated);
 
